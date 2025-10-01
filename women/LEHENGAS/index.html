@@ -1,1 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Lehenga Gallery</title>
+<style>
+  body { font-family: Arial,sans-serif; text-align:center; margin:20px; }
+  .main-image { position:relative; display:inline-block; width:400px; height:600px; border:1px solid #ccc; overflow:hidden; }
+  .main-image img { width:100%; height:100%; object-fit:cover; }
+  .magnifier { display:none; position:absolute; width:400px; height:600px; border:1px solid #ccc; background-repeat:no-repeat; background-size:800px 1200px; top:0; left:420px; }
+  .thumbnails { margin-top:15px; display:flex; flex-wrap:wrap; justify-content:center; gap:10px; }
+  .thumbnails img { width:70px; height:105px; object-fit:cover; border:2px solid transparent; border-radius:4px; cursor:pointer; transition: transform 0.2s, border-color 0.2s; }
+  .thumbnails img:hover { transform:scale(1.05); }
+  .thumbnails img.active { border-color:#0077ff; }
+</style>
+</head>
+<body>
 
+<h2>Lehenga Product Gallery</h2>
+
+<div class="main-image">
+  <img id="mainImage" src="" alt="Main Image">
+  <div id="magnifier" class="magnifier"></div>
+</div>
+
+<div class="thumbnails" id="thumbContainer"></div>
+
+<script>
+// === Your lehenga images ===
+const imageList = [
+  "LEHENGA_0001.png",
+  "LEHENGA_0002.png",
+  "LEHENGA_0003.png",
+  "LEHENGA_0004.png",
+  "LEHENGA_0005.png"
+];
+
+// Base URL for this LEHENGAS folder
+const baseURL = "https://raw.githubusercontent.com/avjhart-design/thumbnail-gallery/main/women/LEHENGAS/";
+
+const mainImage = document.getElementById('mainImage');
+const magnifier = document.getElementById('magnifier');
+const thumbContainer = document.getElementById('thumbContainer');
+
+// Create thumbnails dynamically
+imageList.forEach((filename, index) => {
+  const thumb = document.createElement('img');
+  thumb.src = baseURL + filename;
+  thumb.dataset.large = baseURL + filename;
+  if(index === 0) thumb.classList.add('active');
+  thumb.addEventListener('click', () => {
+    document.querySelectorAll('.thumb').forEach(t => t.classList.remove('active'));
+    thumb.classList.add('active');
+    mainImage.src = thumb.dataset.large;
+    magnifier.style.backgroundImage = `url(${thumb.dataset.large})`;
+  });
+  thumb.classList.add('thumb');
+  thumbContainer.appendChild(thumb);
+});
+
+// Initialize main image
+mainImage.src = baseURL + imageList[0];
+magnifier.style.backgroundImage = `url(${baseURL + imageList[0]})`;
+
+// Magnifier effect
+mainImage.addEventListener('mouseenter', () => magnifier.style.display = 'block');
+mainImage.addEventListener('mouseleave', () => magnifier.style.display = 'none');
+mainImage.addEventListener('mousemove', e => {
+  const rect = mainImage.getBoundingClientRect();
+  const x = e.clientX - rect.left;
+  const y = e.clientY - rect.top;
+  const xPercent = (x / rect.width) * 100;
+  const yPercent = (y / rect.height) * 100;
+  magnifier.style.backgroundPosition = `${xPercent}% ${yPercent}%`;
+});
+</script>
+
+</body>
+</html>
